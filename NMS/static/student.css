@@ -1,0 +1,68 @@
+body {
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
+    height: 100vh; /* full height of the viewport */
+    margin: 0; /* remove default margin */
+    padding: 20px; /* add padding */
+    border: 1px solid #ddd; /* add border */
+    box-sizing: border-box; /* include padding and border in element's total width and height */
+    background-color: #fff; /* add background color */
+    font-family: 'Roboto', sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.15); /* add box shadow */
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px;
+}
+
+#studentsList {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+}
+
+#studentsList th, #studentsList td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#studentsList tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.button {
+    display: inline-block;
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #007B9A;
+}

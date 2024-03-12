@@ -1,0 +1,86 @@
+<!-- 
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ADMIN Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+
+<body>
+    <h1>Welcome ADMIN!</h1>
+
+   
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            <script>showMessage();</script>
+        {% endif %}
+    {% endwith %}
+
+    <a class="button" href="/create_student">Create a new student</a>
+    <a class="button" href="/students">View all students</a>
+    <a class="button" href="/estimate_funds">Estimate funds</a>
+    
+    
+
+    <script>
+        function showMessage() {
+            var messageDiv = document.querySelector('.flashes');
+            messageDiv.style.display = 'block';
+        
+            setTimeout(function() {
+                messageDiv.style.display = 'none';
+            }, 5000);  // Hide the message after 5 seconds
+        }
+    </script>
+</body>
+
+</html>  -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ADMIN Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+
+<body>
+    <h1>Welcome ADMIN!</h1>
+
+    <!-- Display flashed messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            <script>showMessage();</script>
+        {% endif %}
+    {% endwith %}
+
+    <a class="button" href="/create_student">Create a new student</a>
+    <a class="button" href="/students">View all students</a>
+    <a class="button" href="/estimate_funds">Estimate funds</a>
+    <a class="button" href="/donor_list">View Donor List</a> <!-- Added this line -->
+
+    <script>
+        function showMessage() {
+            var messageDiv = document.querySelector('.flashes');
+            messageDiv.style.display = 'block';
+        
+            setTimeout(function() {
+                messageDiv.style.display = 'none';
+            }, 5000);  // Hide the message after 5 seconds
+        }
+    </script>
+</body>
+
+</html>

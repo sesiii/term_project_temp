@@ -1,0 +1,42 @@
+body {
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    color: #315f10;
+}
+
+.flashes {
+    display: none;
+}
+
+.button-container {
+    text-align: center;
+    display: flex;
+    justify-content: space-around; /* Add spacing between buttons */
+}
+
+.button {
+    display: inline-block;
+    background-color: #7b1d9b; /* Change button color */
+    color: rgb(211, 219, 219);
+    border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    cursor: pointer;
+    margin: 10px; /* Add some margin around the buttons */
+    box-shadow: 0 5px #c9b2d9; /* Add 3D effect */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Add transition for smooth color and shadow change */
+}
+
+.button:hover {
+    background-color: #e8987b; /* Change hover color */
+    box-shadow: 0 3px #666; /* Change shadow on hover for 3D effect */
+}
