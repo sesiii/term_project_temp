@@ -68,7 +68,7 @@
 
  -->
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 
 <head>
@@ -105,6 +105,82 @@
             </td>
         </tr>
         {% endfor %}
+    </table>
+
+    <script>
+        $('.deleteButton').click(function() {
+            var studentId = $(this).data('id');
+
+            // Send DELETE request
+            $.ajax({
+                url: '/students/' + studentId,
+                type: 'DELETE',
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Students</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='students.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+
+<body>
+    <div class="nav">
+        {% if prev_url %}
+        <a class="button" href="{{ prev_url }}">Previous</a>
+        {% endif %}
+        {% if next_url %}
+        <a class="button" href="{{ next_url }}">Next</a>
+        {% endif %}
+        <a class="button" href="/home">Back to Admin Main Page</a>
+    </div>
+
+    <h1>Students</h1>
+
+    <table id="studentsList">
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        {% if students %}
+        {% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>
+                <a class="button" href="/students/{{ student.id }}">View Profile</a>
+                <a class="button" href="/students/{{ student.id }}/update">Update</a>
+                <button class="deleteButton button" data-id="{{ student.id }}">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="2">The table is empty.</td>
+        </tr>
+        {% endif %}
     </table>
 
     <script>

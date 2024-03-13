@@ -49,14 +49,21 @@ from flask import flash
 from flask import redirect
 from flask import request
 from faker import Faker
+import pyotp
 from flask import url_for
+from flask import session
 fake = Faker()
 
 
 
-@app.route('/', methods=['GET'])
+
+
+
+
+@app.route('/home', methods=['GET'])
 def home():
     return render_template('home.html')
+
 
 # @app.route('/create_student', methods=['GET', 'POST'])
 # def create_student():
@@ -79,6 +86,10 @@ def home():
 #         flash("Student created")
 #         return redirect('/create_student')
 #     return render_template('create_student.html')
+
+@app.route('/', methods=['GET'])
+def ngo_main():
+    return render_template('ngo_main.html')
 
 @app.route('/create_student', methods=['GET', 'POST'])
 def create_student():
