@@ -1,3 +1,6 @@
+
+#donor data saving
+
 from flask import Flask, render_template, flash, redirect, request, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -17,6 +20,14 @@ with app.app_context():
 
 def generate_uuid():
     return str(uuid.uuid4())
+
+class Donor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    phone_no = db.Column(db.String(15), nullable=True)
+    email_id = db.Column(db.String(255), nullable=True)
+    help_type = db.Column(db.String(255), nullable=False)
+    donation_amount = db.Column(db.Float, nullable=True)
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,6 +64,28 @@ from datetime import datetime, timezone
 now = datetime.now(timezone.utc)
 from datetime import datetime, timedelta, timezone
 
+@app.route('/donate', methods=['GET', 'POST'])
+def submit_donation():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        phone_no = request.form.get('phone_no')
+        email_id = request.form.get('email_id')
+        help_type = request.form.get('help_type')
+        donation_amount = request.form.get('donation_amount')
+
+        if not donation_amount:
+            donation_amount = None
+        else:
+            donation_amount = float(donation_amount)
+
+        donor = Donor(name=name, phone_no=phone_no, email_id=email_id, help_type=help_type, donation_amount=donation_amount)
+        db.session.add(donor)
+        db.session.commit()
+
+        return render_template('donate.html', name=name)
+    else:
+        return render_template('donate.html')
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     ban_until = session.get('ban_until')

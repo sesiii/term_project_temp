@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
-    box-sizing: border-box; /* add box-sizing */
+    box-sizing: border-box;
 }
 
 .form-container {
@@ -11,8 +11,8 @@ body {
     border-radius: 5px;
     max-width: 500px;
     margin: 0 auto;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.15); /* add box shadow */
-    box-sizing: border-box; /* add box-sizing */
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
+    box-sizing: border-box;
 }
 
 form {
@@ -25,53 +25,60 @@ input[type="text"], input[type="submit"], .button {
     border: 1px solid #ddd;
     border-radius: 5px;
     width: 100%;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.15); /* add box shadow */
-    box-sizing: border-box; /* add box-sizing */
-    margin: 10px 0; /* add margin */
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+    margin: 10px 0;
 }
 
 input[type="submit"], .button {
-    background-color: #4CAF50; /* change color for submit button */
+    background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 10px 0; /* add margin */
+    margin: 10px 0;
 }
 
 input[type="submit"]:hover, .button:hover {
     background-color: #45a049;
 }
 
-
-
-input[type="submit"]:hover {
-    background-color: #45a049; /* change hover color for submit button */
-}
-
-.button {
-    background-color: #008CBA; /* change color for back to home button */
-}
-
-.button:hover {
-    background-color: #007B9A; /* change hover color for back to home button */
-}
-
 .button {
     display: inline-block;
     background-color: #008CBA;
     color: white;
-    padding: 2px 5px; /* further reduce padding */
+    padding: 2px 5px;
     text-align: center;
     text-decoration: none;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
-    margin: 2px 0; /* further reduce margin */
+    margin: 2px 0;
 }
 
 .button:hover {
     background-color: #007B9A;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    .form-container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    input[type="text"], input[type="submit"], .button {
+        padding: 5px;
+    }
+
+    input[type="submit"], .button {
+        padding: 5px 10px;
+    }
+
+    .button {
+        padding: 1px 2.5px;
+        margin: 1px 0;
+    }
 }
