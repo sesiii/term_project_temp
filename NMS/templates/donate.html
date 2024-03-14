@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <title>Donate</title>
@@ -18,5 +18,31 @@
         <input type="text" id="donation_amount" name="donation_amount"><br>
         <input type="submit" value="Submit">
     </form>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Donate</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='donate.css') }}">
+</head>
+<body>
+    <h1>Donate</h1>
+    <form action="/donate" method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="phone_no">Phone Number:</label><br>
+        <input type="text" id="phone_no" name="phone_no"><br>
+        <label for="email_id">Email:</label><br>
+        <input type="text" id="email_id" name="email_id"><br>
+        <label for="help_type">Type of Help:</label><br>
+        <input type="text" id="help_type" name="help_type"><br>
+        <label for="donation_amount">Donation Amount:</label><br>
+        <input type="text" id="donation_amount" name="donation_amount"><br>
+        <input type="submit" value="Submit">
+    </form>
+    <a href="/" class="button">Go to NGO Main</a>
 </body>
 </html>
