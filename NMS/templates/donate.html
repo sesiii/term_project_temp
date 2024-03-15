@@ -1,48 +1,70 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Donate</title>
-</head>
-<body>
-    <h1>Donate</h1>
-    <form action="/donate" method="post">
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name"><br>
-        <label for="phone_no">Phone Number:</label><br>
-        <input type="text" id="phone_no" name="phone_no"><br>
-        <label for="email_id">Email:</label><br>
-        <input type="text" id="email_id" name="email_id"><br>
-        <label for="help_type">Type of Help:</label><br>
-        <input type="text" id="help_type" name="help_type"><br>
-        <label for="donation_amount">Donation Amount:</label><br>
-        <input type="text" id="donation_amount" name="donation_amount"><br>
-        <input type="submit" value="Submit">
-    </form>
-</body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Donate</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='donate.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 <body>
     <h1>Donate</h1>
-    <form action="/donate" method="post">
+
+    
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form id="donateForm" action="/donate" method="post">
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name"><br>
+        <input type="text" id="name" name="name" required><br>
         <label for="phone_no">Phone Number:</label><br>
-        <input type="text" id="phone_no" name="phone_no"><br>
+        <input type="text" id="phone_no" name="phone_no" required><br>
         <label for="email_id">Email:</label><br>
-        <input type="text" id="email_id" name="email_id"><br>
-        <label for="help_type">Type of Help:</label><br>
-        <input type="text" id="help_type" name="help_type"><br>
+        <input type="text" id="email_id" name="email_id" required><br>
+        <label>Type of Help:</label><br>
+        <input type="checkbox" id="fees" name="help_type" value="Fees">
+        <label for="fees">Fees</label><br>
+        <input type="checkbox" id="books" name="help_type" value="Books">
+        <label for="books">Books</label><br>
+        <input type="checkbox" id="money" name="help_type" value="Money">
+        <label for="money">Money</label><br>
+        <input type="checkbox" id="food" name="help_type" value="Food">
+        <label for="food">Food</label><br>
+        <input type="checkbox" id="uniform" name="help_type" value="Uniform">
+        <label for="uniform">Uniform</label><br>
+        <input type="checkbox" id="other" name="help_type" value="Other">
+        <label for="other">Other</label><br>
         <label for="donation_amount">Donation Amount:</label><br>
         <input type="text" id="donation_amount" name="donation_amount"><br>
         <input type="submit" value="Submit">
     </form>
     <a href="/" class="button">Go to NGO Main</a>
+
+    <script>
+        $('#donateForm').submit(function (e) {
+            e.preventDefault();
+
+            // Send POST request
+            $.ajax({
+                url: '/donate',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
-</html>
+</html> 

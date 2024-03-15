@@ -12,16 +12,19 @@ body {
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    max-width: 800px;
+    max-width: 8000px;
     padding: 20px;
-    background-color: #fff;
+    background-color: #6b1f1f;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
 }
 
+
 form {
-    display: grid;
-    gap: 10px;
+    display: flex;
+    justify-content: center;
+    /* Align items horizontally */
+    align-items: center;
 }
 
 input[type="text"], input[type="submit"] {
@@ -51,6 +54,7 @@ input[type="submit"]:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 5px;
     box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
 }
 

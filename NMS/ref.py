@@ -1,6 +1,4 @@
 
-#donor data saving
-
 from flask import Flask, render_template, flash, redirect, request, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -21,13 +19,18 @@ with app.app_context():
 def generate_uuid():
     return str(uuid.uuid4())
 
+from sqlalchemy import DateTime
+
+from sqlalchemy import func
+
 class Donor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     phone_no = db.Column(db.String(15), nullable=True)
     email_id = db.Column(db.String(255), nullable=True)
-    help_type = db.Column(db.String(255), nullable=False)
+    help_type = db.Column(db.String(255), nullable=False)  # Store as comma-separated values
     donation_amount = db.Column(db.Float, nullable=True)
+    donation_date = db.Column(DateTime, nullable=False, default=func.now())
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -70,13 +73,23 @@ def submit_donation():
         name = request.form.get('name')
         phone_no = request.form.get('phone_no')
         email_id = request.form.get('email_id')
-        help_type = request.form.get('help_type')
+        help_type = request.form.getlist('help_type')  # Get list of selected checkboxes
         donation_amount = request.form.get('donation_amount')
+        
+        # Check if all required fields are filled in
+        if not name or not phone_no or not email_id or not help_type:
+            return render_template('donate.html', error="All fields are required.")
 
-        if not donation_amount:
+        # Convert help_type list to comma-separated string
+        help_type = ', '.join(help_type)
+
+        if not donation_amount or donation_amount.strip() == '':
             donation_amount = None
         else:
             donation_amount = float(donation_amount)
+        
+        donation_date = datetime.now(timezone.utc)
+
 
         donor = Donor(name=name, phone_no=phone_no, email_id=email_id, help_type=help_type, donation_amount=donation_amount)
         db.session.add(donor)
@@ -86,6 +99,48 @@ def submit_donation():
     else:
         return render_template('donate.html')
     
+
+from sqlalchemy import or_, cast, Date
+from datetime import datetime
+
+@app.route('/donor_list')
+def donor_list():
+    # Get the selected help types and donation dates from the query parameters
+    selected_help_types = request.args.getlist('help_type')
+    selected_help_types = [help_type for help_type in selected_help_types if help_type]
+
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    # Start with a query that includes all donors
+    query = Donor.query
+
+    # If help types are selected, filter donors whose help_type field contains any of the selected help types
+    if selected_help_types:
+        query = query.filter(or_(*[Donor.help_type.like(f"%{help_type}%") for help_type in selected_help_types]))
+
+    # If a date range is selected, filter donors whose donation_date field is within the selected range
+    if start_date and end_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            query = query.filter(Donor.donation_date.between(start_date, end_date))
+        except ValueError:
+            pass  # Ignore invalid dates
+
+    # Order the donors by donation_amount from highest to lowest and then by donation_date from newest to oldest
+    query = query.order_by(Donor.donation_amount.desc(), Donor.donation_date.desc())
+
+    donors = query.all()
+
+    # Get all distinct help types for the select input
+    help_types = db.session.query(Donor.help_type).distinct()
+
+    # Render the donor_list.html template and pass the donors and help types to it
+    return render_template('donor_list.html', donors=donors, help_types=help_types)
+
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     ban_until = session.get('ban_until')
@@ -160,8 +215,23 @@ def create_student():
 @app.route('/students', methods=['GET'])
 def get_students():
     page = request.args.get('page', 1, type=int)
-    per_page = 10  # Change this as needed
-    students = Student.query.paginate(page=page, per_page=per_page, error_out=False)
+    per_page =15 # Change this as needed
+
+    # Get search terms from query parameters
+    field = request.args.get('field')
+    query = request.args.get('query')
+
+    # Filter students
+    students_query = Student.query
+    if field and query:
+        if field == 'class':
+            students_query = students_query.filter(Student.class_.like(f"%{query}%"))
+        elif field == 'help_type':
+            students_query = students_query.filter(Student.help_type.like(f"%{query}%"))
+        elif field == 'school':
+            students_query = students_query.filter(Student.school.like(f"%{query}%"))
+
+    students = students_query.paginate(page=page, per_page=per_page, error_out=False)
     next_url = url_for('get_students', page=students.next_num) if students.has_next else None
     prev_url = url_for('get_students', page=students.prev_num) if students.has_prev else None
     return render_template('students.html', students=students.items, next_url=next_url, prev_url=prev_url)
