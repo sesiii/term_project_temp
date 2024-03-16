@@ -67,6 +67,8 @@ from datetime import datetime, timezone
 now = datetime.now(timezone.utc)
 from datetime import datetime, timedelta, timezone
 
+from flask import Flask, render_template, request, redirect, url_for
+
 @app.route('/donate', methods=['GET', 'POST'])
 def submit_donation():
     if request.method == 'POST':
@@ -90,19 +92,27 @@ def submit_donation():
         
         donation_date = datetime.now(timezone.utc)
 
-
         donor = Donor(name=name, phone_no=phone_no, email_id=email_id, help_type=help_type, donation_amount=donation_amount)
         db.session.add(donor)
         db.session.commit()
 
-        return render_template('donate.html', name=name)
+        donate_now = request.form.get('donate_now')  # Get the value of the "Donate now" checkbox
+        if donate_now:
+            return redirect(url_for('payment'), code=302)
+        else:
+            return redirect(url_for('home'), code=302)  # Replace 'home' with the route for your home page
+
     else:
         return render_template('donate.html')
-    
+
+@app.route('/payment')
+def payment():
+    # return redirect("https://buy.stripe.com/test_eVa0064pN0Qyd7WdQQ", code=302)
+    return redirect("https://donate.stripe.com/test_9AQ7syg8vbvc1peeUW", code=302)
+
 
 from sqlalchemy import or_, cast, Date
 from datetime import datetime
-
 @app.route('/donor_list')
 def donor_list():
     # Get the selected help types and donation dates from the query parameters
@@ -129,8 +139,8 @@ def donor_list():
             pass  # Ignore invalid dates
 
     # Order the donors by donation_amount from highest to lowest and then by donation_date from newest to oldest
-    query = query.order_by(Donor.donation_amount.desc(), Donor.donation_date.desc())
-
+    query = query.order_by(Donor.donation_date.desc(), Donor.donation_amount.desc())
+    
     donors = query.all()
 
     # Get all distinct help types for the select input
@@ -215,7 +225,7 @@ def create_student():
 @app.route('/students', methods=['GET'])
 def get_students():
     page = request.args.get('page', 1, type=int)
-    per_page =15 # Change this as needed
+    per_page =10 # Change this as needed
 
     # Get search terms from query parameters
     field = request.args.get('field')
