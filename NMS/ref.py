@@ -149,7 +149,9 @@ def donor_list():
     # Render the donor_list.html template and pass the donors and help types to it
     return render_template('donor_list.html', donors=donors, help_types=help_types)
 
-
+from flask import Flask, request, session, flash, redirect, url_for, render_template
+from datetime import datetime, timezone, timedelta
+import requests
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -162,6 +164,21 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+
+        # hCaptcha verification
+        captcha_response = request.form.get('h-captcha-response')
+        secret_key = "851b6311-2caa-428c-81eb-d885f1ea4eb9"
+
+        data = {
+            'response': captcha_response,
+            'secret': '851b6311-2caa-428c-81eb-d885f1ea4eb9'
+        }
+
+        response = requests.post('https://hcaptcha.com/siteverify', data=data)
+
+        if not response.json().get('success'):
+            flash('hCaptcha verification failed', 'danger')
+            return render_template('login.html')
 
         admin_username = 'admin'
         admin_password = 'admin123'
@@ -190,6 +207,14 @@ def login():
 
     return render_template('login.html')
 
+import string 
+import random
+
+def random_string(length):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for _ in range(length))
+
 @app.route('/', methods=['GET'])
 def ngo_main():
     return render_template('ngo_main.html')
@@ -203,13 +228,12 @@ def create_student():
         # Hardcoded data for development purposes
         data = {
             'name': random_name,
-            'age': 15,
-            'class_': '10th Grade',
+            'age': random.randint(10, 18),
+            'class_': f'{random.randint(1, 12)}th Grade',
             'school': 'XYZ High School',
-            'parental_income': 50000,
-            'help_type': 'Scholarship'
+            'parental_income': random.randint(10000, 100000),
+            'help_type': random.choice(['Scholarship', 'Grant', 'Loan'])
         }
-
         # # Get data from form
         # data = request.form
 

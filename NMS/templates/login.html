@@ -545,7 +545,7 @@
 </html> -->
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 
 <head>
@@ -573,7 +573,7 @@
 
     <div id="timer" class="centered"></div>
 
-    <!-- Add an overlay div -->
+   
     <div id="overlay" style="display: none;">
         <div id="spinner" class="centered" style="display: none;"></div>
         <progress id="progress" value="0" max="30" class="centered" style="display: none;"></progress>
@@ -659,6 +659,308 @@
             }
         });
     </script>
+</body>
+
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>Login</h1>
+
+        <form id="loginForm" action="/login" method="post">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username"><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password"><br>
+
+
+            <div class="h-captcha" data-sitekey="851b6311-2caa-428c-81eb-d885f1ea4eb9"></div>
+
+            <input type="submit" value="Submit" id="submit-button">
+        </form>
+
+        <a class="button" href="/">Home Page</a>
+        <div id="message"></div>
+    </div>
+
+    <div id="timer" class="centered"></div>
+
+
+    <div id="overlay" style="display: none;">
+        <div id="spinner" class="centered" style="display: none;"></div>
+        <progress id="progress" value="0" max="30" class="centered" style="display: none;"></progress>
+    </div>
+
+    <script>
+        var submitButton = document.getElementById('submit-button');
+        var messageDiv = document.getElementById('message');
+        var failedAttempts = 0;
+        var progress = document.getElementById('progress');
+        var spinner = document.getElementById('spinner');
+        var overlay = document.getElementById('overlay'); // Get the overlay
+
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var captchaResponse = hcaptcha.getResponse();
+
+            if (username !== 'admin' || password !== 'admin123' || captchaResponse === '') {
+                event.preventDefault();
+                var errorMessage = 'Incorrect username or password';
+                if (captchaResponse === '') {
+                    errorMessage = 'Please complete the captcha';
+                }
+                Swal.fire({
+                    title: 'Error!',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    const swalPopup = document.querySelector('.swal2-popup');
+                    const rect = swalPopup.getBoundingClientRect();
+
+                    spinner.style.top = `${rect.top + window.scrollY}px`;
+                    spinner.style.left = `${rect.left + window.scrollX}px`;
+                    spinner.style.width = `${rect.width}px`;
+                    spinner.style.height = `${rect.height}px`;
+                });
+
+
+                failedAttempts++;
+                if (failedAttempts >= 3) {
+                    submitButton.disabled = true;
+                    submitButton.style.backgroundColor = 'grey';
+                    var counter = 30;
+                    progress.style.display = 'none';
+                    spinner.style.display = 'none'; // Show spinner
+                    overlay.style.display = 'block'; // Show overlay
+                    var interval = setInterval(function () {
+                        counter--;
+                        progress.value = 30 - counter;
+                        document.getElementById('timer').textContent = 'Try again in ' + counter + ' seconds';
+                        if (counter % 2 === 0) { // Show popup every 2 seconds
+                            var timerInterval;
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Too many failed attempts. Please try again later.',
+                                timer: 2000, // Popup will close after 2 seconds
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                willOpen: () => {
+                                    Swal.showLoading()
+                                    timerInterval = setInterval(() => {
+                                        const content = Swal.getContent()
+                                        if (content) {
+                                            const b = content.querySelector('b')
+                                            if (b) {
+                                                b.textContent = Swal.getTimerLeft()
+                                            }
+                                        }
+                                    }, 100)
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                }
+                            });
+                        }
+                        if (counter === 0) {
+                            clearInterval(interval);
+                            submitButton.disabled = false;
+                            submitButton.style.backgroundColor = '';
+                            document.getElementById('timer').textContent = '';
+                            progress.style.display = 'none';
+                            spinner.style.display = 'none'; // Hide spinner
+                            overlay.style.display = 'none'; // Hide overlay
+                        }
+                    }, 1000);
+                }
+            }
+            else {
+                // If the credentials and captcha are correct, submit the form
+                document.getElementById('loginForm').submit();
+                window.location.href = 'home.html';
+            }
+        });
+    </script>
+
+
+
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>Login</h1>
+
+        <form id="loginForm" action="/login" method="post">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username"><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password"><br>
+
+            <div class="h-captcha" data-sitekey="851b6311-2caa-428c-81eb-d885f1ea4eb9"></div>
+
+            <input type="submit" value="Submit" id="submit-button">
+        </form>
+
+        <a class="button" href="/">Home Page</a>
+        <div id="message"></div>
+    </div>
+
+    <div id="timer" class="centered"></div>
+
+    <div id="overlay" style="display: none;">
+        <div id="spinner" class="centered" style="display: none;"></div>
+        <progress id="progress" value="0" max="30" class="centered" style="display: none;"></progress>
+    </div>
+
+    <script>
+        var submitButton = document.getElementById('submit-button');
+        var messageDiv = document.getElementById('message');
+        var failedAttempts = 0;
+        var progress = document.getElementById('progress');
+        var spinner = document.getElementById('spinner');
+        var overlay = document.getElementById('overlay'); // Get the overlay
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var captchaResponse = hcaptcha.getResponse();
+
+            if (username !== 'admin' || password !== 'admin123' || captchaResponse === '') {
+                var errorMessage = 'Incorrect username or password';
+                if (captchaResponse === '') {
+                    errorMessage = 'Please complete the captcha';
+                }
+                Swal.fire({
+                    title: 'Error!',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    const swalPopup = document.querySelector('.swal2-popup');
+                    const rect = swalPopup.getBoundingClientRect();
+
+                    spinner.style.top = `${rect.top + window.scrollY}px`;
+                    spinner.style.left = `${rect.left + window.scrollX}px`;
+                    spinner.style.width = `${rect.width}px`;
+                    spinner.style.height = `${rect.height}px`;
+                });
+
+                failedAttempts++;
+                if (failedAttempts >= 3) {
+                    submitButton.disabled = true;
+                    submitButton.style.backgroundColor = 'grey';
+                    var counter = 30;
+                    progress.style.display = 'none';
+                    spinner.style.display = 'none'; // Show spinner
+                    overlay.style.display = 'block'; // Show overlay
+                    var interval = setInterval(function () {
+                        counter--;
+                        progress.value = 30 - counter;
+                        document.getElementById('timer').textContent = 'Try again in ' + counter + ' seconds';
+                        if (counter % 2 === 0) { // Show popup every 2 seconds
+                            var timerInterval;
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Too many failed attempts. Please try again later.',
+                                timer: 2000, // Popup will close after 2 seconds
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                willOpen: () => {
+                                    Swal.showLoading()
+                                    timerInterval = setInterval(() => {
+                                        const content = Swal.getContent()
+                                        if (content) {
+                                            const b = content.querySelector('b')
+                                            if (b) {
+                                                b.textContent = Swal.getTimerLeft()
+                                            }
+                                        }
+                                    }, 100)
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                }
+                            });
+                        }
+                        if (counter === 0) {
+                            clearInterval(interval);
+                            submitButton.disabled = false;
+                            submitButton.style.backgroundColor = '';
+                            document.getElementById('timer').textContent = '';
+                            progress.style.display = 'none';
+                            spinner.style.display = 'none'; // Hide spinner
+                            overlay.style.display = 'none'; // Hide overlay
+                        }
+                    }, 1000);
+                }
+            }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/login',
+                    data: {
+                        username: username,
+                        password: password,
+                        'h-captcha-response': captchaResponse
+                    },
+                    success: function (data, textStatus, xhr) {
+                        if (xhr.status === 200) {
+                            window.location.href = 'home';
+                        }
+                        else {
+                            // Handle error
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred while logging in. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Handle error
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Could not connect to the server. Please check your internet connection and try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
 </body>
 
 </html>
