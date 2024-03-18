@@ -21,6 +21,17 @@ def generate_uuid():
 
 from sqlalchemy import DateTime
 
+from flask_mail import Mail, Message
+
+app.config['MAIL_SERVER'] = 'in-v3.mailjet.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = '079e64bfb75a32c5aa73dcb1728db675'
+app.config['MAIL_PASSWORD'] = '9fbc462b9c77d0bbe6d5fafc113c62de'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
+
 from sqlalchemy import func
 
 class Donor(db.Model):
@@ -69,6 +80,20 @@ from datetime import datetime, timedelta, timezone
 
 from flask import Flask, render_template, request, redirect, url_for
 
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        user_email = request.form.get('email')
+        subject = request.form.get('subject')
+        body = request.form.get('body')
+
+        msg = Message(subject, sender='sesidadi.nssc@gmail.com', recipients=['sesidadi.nssc@gmail.com'])
+        msg.body = f"Message from {user_email}:\n\n{body}"
+        mail.send(msg)
+
+        return jsonify({'message': 'Email sent successfully'}), 200
+    else:
+        return render_template('contact_us.html')
 @app.route('/donate', methods=['GET', 'POST'])
 def submit_donation():
     if request.method == 'POST':
@@ -225,7 +250,7 @@ def create_student():
         # Generate a random name
         random_name = fake.name()
 
-        # Hardcoded data for development purposes
+        # # Hardcoded data for development purposes
         data = {
             'name': random_name,
             'age': random.randint(10, 18),
