@@ -1,0 +1,190 @@
+ <!DOCTYPE html>
+<html>
+
+<head>
+    <title>Create Student</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='create_student.css') }}"> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .form-container {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #e60000;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>Create a new student</h1>
+
+        <form id="createForm" action="/create_student" method="post">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="age">Age:</label><br>
+            <input type="text" id="age" name="age"><br>
+            <label for="class_">Class:</label><br>
+            <input type="text" id="class_" name="class_"><br>
+            <label for="school">School:</label><br>
+            <input type="text" id="school" name="school"><br>
+            <label for="parental_income">Parental Income:</label><br>
+            <input type="text" id="parental_income" name="parental_income"><br>
+            <label for="help_type">Help Type:</label><br>
+            <input type="text" id="help_type" name="help_type"><br>
+            <input type="submit" value="Submit">
+        </form>
+
+        <a class="button" href="/home">Back to home</a>
+    </div>
+
+    <script>
+        $('#createForm').submit(function (e) {
+            e.preventDefault();
+
+            // Send POST request
+            $.ajax({
+                url: '/create_student',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/create_student';
+                        }
+                    });
+                }
+            });
+        });
+        function validateInputs() {
+        //     var name = $('#name').val();
+        //     var age = $('#age').val();
+        //     var class_ = $('#class_').val();
+        //     var school = $('#school').val();
+        //     var parental_income = $('#parental_income').val();
+        //     var help_type = $('#help_type').val();
+
+        //     // Check if name is a string
+        //     if (typeof name !== 'string' || name.trim() === '') {
+        //         Swal.fire({
+        //             title: 'Error!',
+        //             text: 'Please enter a proper name. Name should be a string.',
+        //             icon: 'error',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return false;
+        //     }
+
+        //     // Check if age is a number
+        //     if (isNaN(age) || age.trim() === '') {
+        //         Swal.fire({
+        //             title: 'Error!',
+        //             text: 'Please enter a proper age. Age should be a number.',
+        //             icon: 'error',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return false;
+        //     }
+
+        //     // Check if class is a string
+        //     if (typeof class_ !== 'string' || class_.trim() === '') {
+        //         Swal.fire({
+        //             title: 'Error!',
+        //             text: 'Please enter a proper class. Class should be a string.',
+        //             icon: 'error',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return false;
+        //     }
+
+        //     // Check if school is a string
+        //     if (typeof school !== 'string' || school.trim() === '') {
+        //         Swal.fire({
+        //             title: 'Error!',
+        //             text: 'Please enter a proper school. School should be a string.',
+        //             icon: 'error',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return false;
+        //     }
+
+        //     // Check if parental_income is a number
+        //     if (isNaN(parental_income) || parental_income.trim() === '') {
+        //         Swal.fire({
+        //             title: 'Error!',
+        //             text: 'Please enter a proper parental income. Parental income should be a number.',
+        //             icon: 'error',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return false;
+        //     }
+
+        //     // Check if help_type is a string
+        //     if (typeof help_type !== 'string' || help_type.trim() === '') {
+        //         Swal.fire({
+        //             title: 'Error!',
+        //             text: 'Please enter a proper help type. Help type should be a string.',
+        //             icon: 'error',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return false;
+        //     }
+
+        //     return true;
+        pass
+         }
+    </script>
+</body>
+
+</html>  

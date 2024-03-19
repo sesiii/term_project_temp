@@ -1,0 +1,89 @@
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Profile</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+
+        .edit-icon {
+            position: relative;
+        }
+
+        .edit-icon::after {
+            content: "\f044";
+            font-family: "Font Awesome 5 Free";
+            position: absolute;
+            right: -20px;
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Student Profile</h1>
+
+        <img src="https://robohash.org/{{ student.id }}?set=set4" alt="Profile Picture">
+
+        <p>Name: {{ student.name }}</p>
+        <p>Age: {{ student.age }}</p>
+        <p>School: {{ student.school }}</p>
+        <p>Parental Income: {{ student.parental_income }}</p>
+        <p>Help Type: {{ student.help_type }}</p>
+
+        <a href="/students">Back to Students List</a>
+    </div>
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Profile</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='student.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Student Profile</h1>
+
+        <img src="https://robohash.org/{{ student.id }}?set=set4" alt="Profile Picture">
+
+        <p>Name: {{ student.name }}</p>
+        <p>Age: {{ student.age }}</p>
+        <p>School: {{ student.school }}</p>
+        <p>Parental Income: {{ student.parental_income }}</p>
+        <p>Help Type: {{ student.help_type }}</p>
+
+        <a class="button" href="/students">Back to Students List</a>
+    </div>
+</body>
+
+</html>

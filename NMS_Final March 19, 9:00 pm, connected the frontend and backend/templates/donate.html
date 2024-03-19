@@ -1,0 +1,155 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>Donate</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='donate.css') }}">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .btn-custom {
+            background-color: #007BFF;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        .button-top-left {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .donate-now-button {
+        background-color: #28a745; /* Green */
+        color: #ffffff; /* White */
+        }
+
+        .donate-now-button:hover {
+        background-color: #1c7430; /* Darker green */
+        }
+        
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script>
+        var timeout;
+        var interval;
+
+        function startTimer() {
+            var seconds = 5;
+            Swal.fire({
+                title: 'Redirecting to NGO main page in ' + seconds + ' seconds...',
+                html: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                showConfirmButton: true,
+                confirmButtonText: 'Stay on this page',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                onBeforeOpen: function() {
+                    interval = setInterval(function() {
+                        seconds--;
+                        Swal.update({
+                            title: 'Redirecting to NGO main page in ' + seconds + ' seconds...'
+                        });
+                        if (seconds <= 0) {
+                            clearInterval(interval);
+                            Swal.close();
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    cancelTimer();
+                }
+            });
+        }
+
+        function cancelTimer() {
+            clearTimeout(timeout);
+            clearInterval(interval);
+        }
+    </script>
+</head>
+<body>
+    <h1 class="text-center mb-4">Donate</h1>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form id="donateForm" action="/donate" method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="phone_no">Phone Number:</label><br>
+        <input type="text" id="phone_no" name="phone_no" required><br>
+        <label for="email_id">Email:</label><br>
+        <input type="text" id="email_id" name="email_id" required><br>
+        <label>Type of Help:</label><br>
+        <input type="checkbox" id="fees" name="help_type" value="Fees">
+        <label for="fees">Fees</label><br>
+        <input type="checkbox" id="books" name="help_type" value="Books">
+        <label for="books">Books</label><br>
+        <input type="checkbox" id="money" name="help_type" value="Money">
+        <label for="money">Money</label><br>
+        <input type="checkbox" id="food" name="help_type" value="Food">
+        <label for="food">Food</label><br>
+        <input type="checkbox" id="uniform" name="help_type" value="Uniform">
+        <label for="uniform">Uniform</label><br>
+        <input type="checkbox" id="other" name="help_type" value="Other">
+        <label for="other">Other</label><br>
+        <label for="donation_amount">Donation Amount:</label><br>
+        <input type="text" id="donation_amount" name="donation_amount"><br>
+        <input type="submit" value="Submit">
+        
+        <button id="donateNow" type="button" class="donate-now-button">Donate Now</button>
+    </form>
+
+    <button onclick="location.href='/'" class="button-top-left">Go to NGO Main</button>
+
+    
+    <script>
+        $('#donateNow').click(function() {
+            window.open('/payment', '_blank');
+        });
+
+        $('#donateForm').submit(function (e) {
+            e.preventDefault();
+
+            // Send POST request
+            $.ajax({
+                url: '/donate',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            startTimer();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
+
+
+
