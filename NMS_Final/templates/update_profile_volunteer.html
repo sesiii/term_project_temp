@@ -1,9 +1,7 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Volunteer Dashboard</title>
+    <title>Update Profile</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,40 +14,49 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .profile-info {
+        form {
             background-color: #fff;
             padding: 20px;
             border-radius: 5px;
-            margin-bottom: 20px;
         }
-        .profile-info p {
+        input, select, button {
+            width: 100%;
+            padding: 10px;
             margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
-        a {
-            display: inline-block;
+        button {
             background-color: #007BFF;
             color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
+            cursor: pointer;
         }
-        a:hover {
+        button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, {{ current_user.name }}!</h1>
-        <div class="profile-info">
-            <p>Email: {{ current_user.email }}</p>
-            <p>Phone: {{ current_user.phone }}</p>
-            <p>Availability: {{ current_user.availability }}</p>
-            <p>Subscribed to Newsletter: {{ "Yes" if current_user.subscribe_newsletter else "No" }}</p>
-            <p>Active Volunteer: {{ "Yes" if current_user.active_volunteer else "No" }}</p>
-        </div>
-        <a href="{{ url_for('update_profile') }}">Update Profile</a>
-        <a href="{{ url_for('ngo_main') }}" style="margin-left: 10px;">Return to Main</a>
+        <h1>Update Profile</h1>
+        <form method="POST" action="{{ url_for('update_profile') }}">
+            <input type="text" name="name" placeholder="Name" value="{{ current_user.name }}" required>
+            <input type="email" name="email" placeholder="Email" value="{{ current_user.email }}" required>
+            <input type="text" name="phone" placeholder="Phone" value="{{ current_user.phone }}">
+            <select name="availability">
+                <option value="weekly" {% if current_user.availability == 'weekly' %}selected{% endif %}>Weekly</option>
+                <option value="monthly" {% if current_user.availability == 'monthly' %}selected{% endif %}>Monthly</option>
+            </select>
+            <label>
+                <input type="checkbox" name="subscribe_newsletter" {% if current_user.subscribe_newsletter %}checked{% endif %}>
+                Subscribe to newsletter
+            </label>
+            <label>
+                <input type="checkbox" name="active_volunteer" {% if current_user.active_volunteer %}checked{% endif %}>
+                Active volunteer
+            </label>
+            <button type="submit">Update Profile</button>
+        </form>
     </div>
 </body>
 </html>
