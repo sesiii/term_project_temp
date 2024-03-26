@@ -67,7 +67,124 @@ class Student(db.Model):
             'parental_income': self.parental_income,
             'help_type': self.help_type
         }
+from flask_login import UserMixin, current_user, login_required, login_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
+# class Volunteer(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(100), nullable=False)
+#     email = db.Column(db.String(120), unique=True, nullable=False)
+#     password_hash = db.Column(db.String(200), nullable=False)
+
+#     def set_password(self, password):
+#         self.password_hash = generate_password_hash(password)
+
+#     def check_password(self, password):
+#         return check_password_hash(self.password_hash, password)
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+class Volunteer(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    phone = db.Column(db.String(15))
+    availability = db.Column(db.String(50))
+    subscribe_newsletter = db.Column(db.Boolean, default=False)
+    active_volunteer = db.Column(db.Boolean, default=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+# Routes for signup, login, and volunteer dashboard
+
+@app.route('/signup_volunteer', methods=['GET', 'POST'])
+def signup_volunteer():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        phone = request.form.get('phone')
+        availability = request.form.get('availability')
+        subscribe_newsletter = 'subscribe_newsletter' in request.form
+        active_volunteer = 'active_volunteer' in request.form
+
+        existing_volunteer = Volunteer.query.filter_by(email=email).first()
+        if existing_volunteer:
+            flash('Email already exists. Please use a different email.')
+            return redirect(url_for('signup_volunteer'))
+
+        new_volunteer = Volunteer(
+            name=name, 
+            email=email, 
+            phone=phone, 
+            availability=availability, 
+            subscribe_newsletter=subscribe_newsletter, 
+            active_volunteer=active_volunteer
+        )
+        new_volunteer.set_password(password)
+
+        db.session.add(new_volunteer)
+        db.session.commit()
+
+        flash('Signup successful')
+        return redirect(url_for('login_volunteer'))
+    return render_template('signup_volunteer.html')
+
+@app.route('/login_volunteer', methods=['GET', 'POST'])
+def login_volunteer():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        volunteer = Volunteer.query.filter_by(email=email).first()
+
+        if volunteer and volunteer.check_password(password):
+            login_user(volunteer)
+            flash('Login successful')
+            return redirect(url_for('volunteer'))
+        else:
+            flash('Invalid email or password')
+            return redirect(url_for('login_volunteer'))
+
+    return render_template('login_volunteer.html')
+from flask_login import LoginManager
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Return the user from the database
+    return Volunteer.query.get(int(user_id))
+
+@app.route('/volunteer')
+@login_required
+def volunteer():
+    # Access current volunteer using 'current_user' provided by Flask-Login
+    return render_template('volunteer.html')
+
+@app.route('/update_profile_volunteer', methods=['GET', 'POST'])
+@login_required
+def update_profile():
+    if request.method == 'POST':
+        current_user.name = request.form['name']
+        current_user.email = request.form['email']
+        current_user.phone = request.form.get('phone')
+        current_user.availability = request.form.get('availability')
+        current_user.subscribe_newsletter = 'subscribe_newsletter' in request.form
+        current_user.active_volunteer = 'active_volunteer' in request.form
+
+        db.session.commit()
+
+        flash('Profile updated successfully')
+        return redirect(url_for('volunteer'))
+    return render_template('update_profile_volunteer.html')
 fake = Faker()
 
 @app.route('/home', methods=['GET'])
@@ -79,6 +196,7 @@ now = datetime.now(timezone.utc)
 from datetime import datetime, timedelta, timezone
 
 from flask import Flask, render_template, request, redirect, url_for
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -94,6 +212,8 @@ def contact():
         return jsonify({'message': 'Email sent successfully'}), 200
     else:
         return render_template('contact_us.html')
+    
+
 @app.route('/donate', methods=['GET', 'POST'])
 def submit_donation():
     if request.method == 'POST':
@@ -232,6 +352,7 @@ def login():
 
     return render_template('login.html')
 
+
 import string 
 import random
 
@@ -242,6 +363,7 @@ def random_string(length):
 
 @app.route('/', methods=['GET'])
 def ngo_main():
+    
     return render_template('ngo_main.html')
 
 @app.route('/create_student', methods=['GET', 'POST'])
