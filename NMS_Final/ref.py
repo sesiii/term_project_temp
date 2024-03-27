@@ -184,6 +184,27 @@ def update_profile():
         flash('Profile updated successfully')
         return redirect(url_for('volunteer'))
     return render_template('update_profile_volunteer.html')
+
+from flask import request
+
+@app.route('/volunteer_list')
+def volunteer_list():
+    # Fetch all volunteers from the database
+    volunteers = Volunteer.query.all()
+
+    # Get filter parameters from the request
+    subscribe_newsletter = request.args.get('subscribe_newsletter')
+    active_volunteer = request.args.get('active_volunteer')
+
+    # Apply filters if parameters are provided
+    if subscribe_newsletter:
+        volunteers = [volunteer for volunteer in volunteers if volunteer.subscribe_newsletter == (subscribe_newsletter == 'Yes')]
+    if active_volunteer:
+        volunteers = [volunteer for volunteer in volunteers if volunteer.active_volunteer == (active_volunteer == 'Yes')]
+
+    return render_template('volunteer_list.html', volunteers=volunteers)
+
+
 @app.route('/contact_us', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
@@ -379,25 +400,24 @@ def create_student():
 @app.route('/students', methods=['GET'])
 def get_students():
     page = request.args.get('page', 1, type=int)
-    per_page =10 # Change this as needed
+    per_page = 25  # Change this as needed
 
-    # Get search terms from query parameters
-    field = request.args.get('field')
-    query = request.args.get('query')
+    # Get filter terms from query parameters
+    class_filter = request.args.get('class_filter')
+    help_type_filter = request.args.get('help_type_filter')
 
     # Filter students
     students_query = Student.query
-    if field and query:
-        if field == 'class':
-            students_query = students_query.filter(Student.class_.like(f"%{query}%"))
-        elif field == 'help_type':
-            students_query = students_query.filter(Student.help_type.like(f"%{query}%"))
-        elif field == 'school':
-            students_query = students_query.filter(Student.school.like(f"%{query}%"))
+    if class_filter:
+        students_query = students_query.filter(Student.class_ == class_filter)
+    if help_type_filter:
+        students_query = students_query.filter(Student.help_type == help_type_filter)
 
     students = students_query.paginate(page=page, per_page=per_page, error_out=False)
-    next_url = url_for('get_students', page=students.next_num) if students.has_next else None
-    prev_url = url_for('get_students', page=students.prev_num) if students.has_prev else None
+    
+    # Construct pagination URLs with filters if they exist
+    next_url = url_for('get_students', page=students.next_num, class_filter=class_filter, help_type_filter=help_type_filter) if students.has_next else None
+    prev_url = url_for('get_students', page=students.prev_num, class_filter=class_filter, help_type_filter=help_type_filter) if students.has_prev else None
     return render_template('students.html', students=students.items, next_url=next_url, prev_url=prev_url)
 
 @app.route('/about_us')

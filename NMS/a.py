@@ -1549,7 +1549,7 @@
 
 
 ####################################################################################################
-#volunteer added
+#volunteer added, admin side data retrieval, filters added
 
 from flask import Flask, render_template, flash, redirect, request, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -1737,7 +1737,28 @@ def update_profile():
         flash('Profile updated successfully')
         return redirect(url_for('volunteer'))
     return render_template('update_profile_volunteer.html')
-fake = Faker()
+
+from flask import Flask, render_template
+
+
+from flask import request
+
+@app.route('/volunteer_list')
+def volunteer_list():
+    # Fetch all volunteers from the database
+    volunteers = Volunteer.query.all()
+
+    # Get filter parameters from the request
+    subscribe_newsletter = request.args.get('subscribe_newsletter')
+    active_volunteer = request.args.get('active_volunteer')
+
+    # Apply filters if parameters are provided
+    if subscribe_newsletter:
+        volunteers = [volunteer for volunteer in volunteers if volunteer.subscribe_newsletter == (subscribe_newsletter == 'Yes')]
+    if active_volunteer:
+        volunteers = [volunteer for volunteer in volunteers if volunteer.active_volunteer == (active_volunteer == 'Yes')]
+
+    return render_template('volunteer_list.html', volunteers=volunteers)
 
 @app.route('/home', methods=['GET'])
 def home():
@@ -1907,6 +1928,8 @@ def login():
 
 import string 
 import random
+from faker import Faker
+
 
 def random_string(length):
     """Generate a random string of fixed length """
@@ -1915,23 +1938,26 @@ def random_string(length):
 
 @app.route('/', methods=['GET'])
 def ngo_main():
-    
     return render_template('ngo_main.html')
+    
 
 @app.route('/create_student', methods=['GET', 'POST'])
 def create_student():
     if request.method == 'POST':
+        
         # Generate a random name
+        fake = Faker()
+
         random_name = fake.name()
 
-        # # Hardcoded data for development purposes
+        # # # Hardcoded data for development purposes
         data = {
             'name': random_name,
             'age': random.randint(10, 18),
             'class_': f'{random.randint(1, 12)}th Grade',
             'school': 'XYZ High School',
             'parental_income': random.randint(10000, 100000),
-            'help_type': random.choice(['Scholarship', 'Grant', 'Loan'])
+            'help_type': random.choice(['Money', 'Books', 'Fees','Food','Other','Uniform'])
         }
         # # Get data from form
         # data = request.form
@@ -1944,29 +1970,29 @@ def create_student():
     else:
         # Render the form for creating a new student
         return render_template('create_student.html')
-    
+
+
 @app.route('/students', methods=['GET'])
 def get_students():
     page = request.args.get('page', 1, type=int)
-    per_page =10 # Change this as needed
+    per_page = 25  # Change this as needed
 
-    # Get search terms from query parameters
-    field = request.args.get('field')
-    query = request.args.get('query')
+    # Get filter terms from query parameters
+    class_filter = request.args.get('class_filter')
+    help_type_filter = request.args.get('help_type_filter')
 
     # Filter students
     students_query = Student.query
-    if field and query:
-        if field == 'class':
-            students_query = students_query.filter(Student.class_.like(f"%{query}%"))
-        elif field == 'help_type':
-            students_query = students_query.filter(Student.help_type.like(f"%{query}%"))
-        elif field == 'school':
-            students_query = students_query.filter(Student.school.like(f"%{query}%"))
+    if class_filter:
+        students_query = students_query.filter(Student.class_ == class_filter)
+    if help_type_filter:
+        students_query = students_query.filter(Student.help_type == help_type_filter)
 
     students = students_query.paginate(page=page, per_page=per_page, error_out=False)
-    next_url = url_for('get_students', page=students.next_num) if students.has_next else None
-    prev_url = url_for('get_students', page=students.prev_num) if students.has_prev else None
+    
+    # Construct pagination URLs with filters if they exist
+    next_url = url_for('get_students', page=students.next_num, class_filter=class_filter, help_type_filter=help_type_filter) if students.has_next else None
+    prev_url = url_for('get_students', page=students.prev_num, class_filter=class_filter, help_type_filter=help_type_filter) if students.has_prev else None
     return render_template('students.html', students=students.items, next_url=next_url, prev_url=prev_url)
 
 @app.route('/students/<int:id>', methods=['GET', 'PUT', 'DELETE'])
@@ -2032,3 +2058,4 @@ def delete_student(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+

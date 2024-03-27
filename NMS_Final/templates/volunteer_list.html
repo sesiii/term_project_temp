@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Students</title>
+    <title>Volunteers List</title>
+    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
         /* Add some custom styling to the table */
@@ -69,70 +70,53 @@
             <a href="/"><i class="fas fa-home"></i> Back to NGO Site</a>
             <a href="/volunteer_list"><i class="fas fa-list"></i> View Volunteer List</a>
         </div>
-        <h1 class="my-4">Students</h1>
-        <!-- Move the "Back to Home" button to the top -->
+        <h1 class="my-4">Volunteers List</h1>
         <a href="/home" class="btn btn-primary mb-4">Back to Home</a>
         <form method="GET" class="mb-4">
-            <label for="help_type_filter">Filter by Help Type:</label>
-            <select name="help_type_filter" id="help_type_filter">
-                <option value="">Select a Help Type</option>
-                <option value="Fees">Fees</option>
-                <option value="Books">Books</option>
-                <option value="Money">Money</option>
-                <option value="Food">Food</option>
-                <option value="Other">Other</option>
-                <option value="Uniform">Uniform</option>
+            <label for="subscribe_newsletter">Subscribed to Newsletter:</label>
+            <select name="subscribe_newsletter" id="subscribe_newsletter">
+                <option value="">Select</option>
+                <option value="Yes" {% if request.args.get('subscribe_newsletter') == 'Yes' %} selected {% endif %}>Yes</option>
+                <option value="No" {% if request.args.get('subscribe_newsletter') == 'No' %} selected {% endif %}>No</option>
             </select>
-            <button type="submit" name="sort" value="date">Sort by Date</button>
+        
+            <label for="active_volunteer"> Volunteer status:</label>
+            <select name="active_volunteer" id="active_volunteer">
+                <option value="">Select</option>
+                <option value="Yes" {% if request.args.get('active_volunteer') == 'Yes' %} selected {% endif %}>Yes</option>
+                <option value="No" {% if request.args.get('active_volunteer') == 'No' %} selected {% endif %}>No</option>
+            </select>
+        
             <button type="submit">Apply Filters</button>
-            <button type="reset" onclick="window.location.href='/students'">Remove All Filters</button>
+            <a href="/volunteer_list" class="btn btn-warning">Reset Filters</a>
         </form>
+        
+        
+        
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Actions</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Availability</th>
+                    <th>Subscribed to Newsletter</th>
+                    <th>Active Volunteer</th>
                 </tr>
             </thead>
             <tbody>
-                {% for student in students %}
+                {% for volunteer in volunteers %}
                 <tr>
-                    <td>{{ student.name }}</td>
-                    <td>
-                        <a class="button" href="/students/{{ student.id }}">View Profile</a>
-                        <a class="button" href="/students/{{ student.id }}/update">Update</a>
-                        <button class="deleteButton button" data-id="{{ student.id }}">Delete</button>
-                    </td>
+                    <td>{{ volunteer.name }}</td>
+                    <td>{{ volunteer.email }}</td>
+                    <td>{{ volunteer.phone }}</td>
+                    <td>{{ volunteer.availability }}</td>
+                    <td>{{ "Yes" if volunteer.subscribe_newsletter else "No" }}</td>
+                    <td>{{ "Yes" if volunteer.active_volunteer else "No" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
-        $('.deleteButton').click(function () {
-            var studentId = $(this).data('id');
-
-            // Send DELETE request
-            $.ajax({
-                url: '/students/' + studentId,
-                type: 'DELETE',
-                success: function (response) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: response.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload();
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 </body>
 </html>
-
